@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ことのは</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#c8eeff;--sky2:#dff4ff;--peach:#ffd6e0;--peach2:#ffe8f0;--mint:#d4f5e9;--lav:#e8deff;--white:#fff;--glass:rgba(255,255,255,0.65);--glass2:rgba(255,255,255,0.88);--border:rgba(160,205,235,0.38);--border2:rgba(240,170,195,0.32);--text:#4a5568;--soft:#7a8fa6;--dim:#a0b4c8;--accent:#74c5f0;--accent2:#f4a0b8;--green:#6dd8a0;--r:18px;--rsm:12px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;font-weight:300;height:100vh;overflow:hidden;display:grid;grid-template-columns:300px 1fr;background:linear-gradient(135deg,#e5f4ff 0%,#fce5f0 55%,#e8e5ff 100%);position:relative;}
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bubble{position:absolute;border-radius:50%;opacity:0;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(0.8)}10%{opacity:.5}90%{opacity:.2}100%{opacity:0;transform:translateY(-110vh) scale(1.1)}}
+.sidebar{background:var(--glass2);backdrop-filter:blur(20px);border-right:1.5px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:10;overflow:hidden;}
+.sidebar-header{padding:22px 20px 16px;border-bottom:1.5px solid var(--border);flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--sky),var(--peach));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 14px rgba(116,197,240,.28);flex-shrink:0;}
+.logo-text h1{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;background:linear-gradient(135deg,#4fb0e0,#e070a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-text p{font-size:10px;color:var(--dim);letter-spacing:.12em;margin-top:2px;}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.sidebar-scroll::-webkit-scrollbar{width:3px;}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.card{background:var(--glass);backdrop-filter:blur(12px);border-radius:var(--rsm);border:1.5px solid var(--border);padding:13px;}
+.card-title{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));flex-shrink:0;}
+.vp{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.5);border:1.5px solid var(--border);cursor:pointer;transition:all .2s;margin-bottom:6px;}
+.vp:last-child{margin-bottom:0;}
+.vp:hover{border-color:var(--accent);background:rgba(116,197,240,.08);transform:translateY(-1px);}
+.vp.active{border-color:var(--accent);background:linear-gradient(135deg,rgba(116,197,240,.12),rgba(244,160,184,.08));}
+.vp-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.8);border:1px solid var(--border);flex-shrink:0;}
+.vp-info h4{font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--text);}
+.vp-info p{font-size:10px;color:var(--dim);margin-top:1px;}
+.badge{margin-left:auto;font-size:9px;font-family:'Nunito',sans-serif;font-weight:700;padding:3px 8px;border-radius:20px;background:linear-gradient(135deg,var(--sky),var(--peach));color:#5a8fa8;white-space:nowrap;}
+.fl{display:flex;flex-direction:column;gap:6px;}
+.lbl{font-size:10px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--soft);letter-spacing:.08em;text-transform:uppercase;}
+.inp{width:100%;background:rgba(255,255,255,.7);border:1.5px solid var(--border);border-radius:9px;padding:8px 11px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:12px;outline:none;transition:all .2s;}
+.inp:focus{border-color:var(--accent);background:rgba(255,255,255,.92);box-shadow:0 0 0 3px rgba(116,197,240,.14);}
+.inp::placeholder{color:var(--dim);}
+.sr{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--dim);}
+.sd{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.tabs{display:flex;gap:4px;}
+.tab{flex:1;padding:7px 4px;background:rgba(255,255,255,.5);border:1.5px solid var(--border);border-radius:8px;color:var(--dim);font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.tab.active{background:linear-gradient(135deg,rgba(116,197,240,.18),rgba(244,160,184,.12));border-color:var(--accent);color:#5a9fcc;}
+.save-btn{width:100%;padding:11px;background:linear-gradient(135deg,#74c5f0,#f4a0b8);border:none;border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(116,197,240,.3);letter-spacing:.04em;}
+.save-btn:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(116,197,240,.4);}
+.char-tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-family:'Nunito',sans-serif;font-weight:600;background:rgba(255,255,255,.6);border:1.5px solid var(--border);color:var(--soft);cursor:pointer;transition:all .15s;user-select:none;}
+.char-tag:hover{border-color:var(--accent);color:#5a9fcc;transform:translateY(-1px);}
+.char-tag.selected{background:linear-gradient(135deg,rgba(116,197,240,.18),rgba(244,160,184,.12));border-color:var(--accent);color:#5a9fcc;}
+.main{display:flex;flex-direction:column;position:relative;z-index:1;overflow:hidden;}
+.chat-header{padding:14px 26px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(255,255,255,.42);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);}
+.conn-pill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.7);border:1.5px solid var(--border);font-size:11px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--soft);}
+.clear-btn{background:rgba(255,255,255,.6);border:1.5px solid var(--border2);color:var(--dim);padding:5px 12px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.clear-btn:hover{border-color:var(--accent2);color:#d07090;background:rgba(244,160,184,.1);}
+.conversation{flex:1;overflow-y:auto;padding:22px 26px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
+.conversation::-webkit-scrollbar{width:4px;}
+.conversation::-webkit-scrollbar-thumb{background:rgba(116,197,240,.28);border-radius:2px;}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:50px;animation:fadeIn .6s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mascot{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--peach));display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 8px 32px rgba(116,197,240,.28);animation:float 3s ease-in-out infinite;margin-bottom:6px;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.welcome h2{font-family:'Nunito',sans-serif;font-size:21px;font-weight:800;background:linear-gradient(135deg,#4fb0e0,#e070a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.welcome p{font-size:13px;color:var(--soft);line-height:1.8;max-width:290px;}
+.tips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+.tip{padding:5px 13px;background:rgba(255,255,255,.7);border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--soft);}
+.message{display:flex;gap:10px;animation:slideUp .28s ease;max-width:740px;}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.message.user{flex-direction:row-reverse;align-self:flex-end;}
+.message.ai{align-self:flex-start;}
+.msg-avatar{width:33px;height:33px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;margin-top:2px;}
+.message.user .msg-avatar{background:linear-gradient(135deg,var(--sky),var(--lav));box-shadow:0 3px 10px rgba(116,197,240,.22);}
+.message.ai .msg-avatar{background:linear-gradient(135deg,var(--peach),#fff3cc);box-shadow:0 3px 10px rgba(244,160,184,.22);}
+.msg-content{max-width:560px;}
+.msg-name{font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;color:var(--dim);margin-bottom:4px;}
+.message.user .msg-name{text-align:right;}
+.msg-bubble{padding:11px 15px;border-radius:15px;font-size:14px;line-height:1.7;color:var(--text);}
+.message.user .msg-bubble{background:linear-gradient(135deg,rgba(116,197,240,.16),rgba(167,139,250,.1));border:1.5px solid rgba(116,197,240,.28);border-top-right-radius:4px;}
+.message.ai .msg-bubble{background:rgba(255,255,255,.78);border:1.5px solid var(--border);border-top-left-radius:4px;backdrop-filter:blur(8px);}
+.typing-dots{display:flex;gap:5px;padding:13px 16px;align-items:center;}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));animation:typing 1.2s ease infinite;opacity:.5;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.mic-area{padding:18px 26px 22px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px;background:rgba(255,255,255,.42);backdrop-filter:blur(12px);border-top:1.5px solid var(--border);}
+.tr-display{min-height:38px;width:100%;max-width:540px;display:flex;align-items:center;justify-content:center;text-align:center;}
+.tr-placeholder{font-size:13px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:600;}
+.tr-text{font-size:14px;color:var(--text);line-height:1.6;display:none;}
+.mic-row{display:flex;align-items:center;gap:14px;}
+.mic-btn{position:relative;width:66px;height:66px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sky),var(--peach));box-shadow:0 6px 20px rgba(116,197,240,.32);outline:none;transition:all .2s;flex-shrink:0;}
+.mic-btn:hover{transform:scale(1.06);box-shadow:0 8px 28px rgba(116,197,240,.44);}
+.mic-btn.listening{background:linear-gradient(135deg,#f4a0b8,#f4c0a8);box-shadow:0 6px 28px rgba(244,160,184,.48);animation:mpulse 1.5s ease infinite;}
+@keyframes mpulse{0%,100%{box-shadow:0 6px 20px rgba(244,160,184,.38)}50%{box-shadow:0 6px 36px rgba(244,160,184,.68),0 0 0 12px rgba(244,160,184,.08)}}
+.mic-btn svg{width:27px;height:27px;}
+.wave-wrap{display:flex;align-items:center;gap:3px;height:28px;opacity:0;transition:opacity .3s;}
+.wave-wrap.active{opacity:1;}
+.wave-bar{width:3px;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:2px;height:4px;transition:height .08s ease;}
+.mic-hint{font-size:11px;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:600;text-align:center;}
+.toast{position:fixed;bottom:26px;right:26px;padding:12px 18px;background:rgba(255,255,255,.95);border-radius:12px;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;z-index:1000;display:none;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:310px;backdrop-filter:blur(12px);border-left:4px solid var(--accent);}
+#character-panel{display:none;flex-direction:column;gap:10px;margin-top:8px;}
+#prompt-preview{background:rgba(255,255,255,.6);border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:11px;color:var(--soft);line-height:1.6;min-height:52px;cursor:pointer;}
+.ctbtn{background:rgba(255,255,255,.6);border:1.5px solid var(--border);color:var(--soft);padding:3px 9px;border-radius:8px;font-size:10px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;}
+.ctbtn:hover{border-color:var(--accent);color:#5a9fcc;}
+select.inp{cursor:pointer;}
+textarea.inp{resize:vertical;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="bubbles" id="bubbles"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">🌸</div>
+      <div class="logo-text">
+        <h1>ことのは</h1>
+        <p>AI VOICE CHAT · CHILL</p>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-scroll">
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>音声プロファイル</div>
+      <div class="vp active" id="profile-browser" onclick="setTTSMode('browser')">
+        <div class="vp-icon">🌐</div>
+        <div class="vp-info"><h4>ブラウザ音声</h4><p>内蔵の音声合成</p></div>
+        <span class="badge" id="badge-browser">使用中</span>
+      </div>
+      <div class="vp" id="profile-elevenlabs" onclick="setTTSMode('elevenlabs')">
+        <div class="vp-icon">✨</div>
+        <div class="vp-info"><h4>ElevenLabs</h4><p>声クローン対応</p></div>
+        <span class="badge" id="badge-elevenlabs" style="display:none">使用中</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>AI プロバイダー</div>
+      <div class="tabs">
+        <button class="tab active" id="provider-groq" onclick="setProvider('groq')">🆓 Groq</button>
+        <button class="tab" id="provider-gemini" onclick="setProvider('gemini')">Gemini</button>
+        <button class="tab" id="provider-anthropic" onclick="setProvider('anthropic')">Claude</button>
+      </div>
+      <div id="groq-settings" class="fl" style="margin-top:10px">
+        <div class="lbl">Groq API キー</div>
+        <input class="inp" type="password" id="groq-key" placeholder="gsk_...">
+        <div class="sr"><span class="sd" id="groq-status" style="background:#c8d8e8"></span><span id="groq-status-text">未設定</span><a href="https://console.groq.com" target="_blank" style="color:var(--accent);font-size:10px;margin-left:auto;text-decoration:none">無料取得 →</a></div>
+      </div>
+      <div id="gemini-settings" class="fl" style="margin-top:10px;display:none">
+        <div class="lbl">Gemini API キー</div>
+        <input class="inp" type="password" id="gemini-key" placeholder="AIza...">
+        <div class="sr"><span class="sd" id="gemini-status" style="background:#c8d8e8"></span><span id="gemini-status-text">未設定</span></div>
+      </div>
+      <div id="anthropic-settings" class="fl" style="margin-top:10px;display:none">
+        <div class="lbl">Anthropic API キー</div>
+        <input class="inp" type="password" id="anthropic-key" placeholder="sk-ant-...">
+        <div class="sr"><span class="sd" id="anthropic-status" style="background:#c8d8e8"></span><span id="anthropic-status-text">未設定</span></div>
+      </div>
+    </div>
+
+    <div class="card" id="elevenlabs-settings" style="display:none">
+      <div class="card-title"><span class="dot"></span>ElevenLabs</div>
+      <div class="fl">
+        <div class="lbl">API キー</div>
+        <input class="inp" type="password" id="elevenlabs-key" placeholder="sk_...">
+        <div class="lbl">Voice ID</div>
+        <input class="inp" id="elevenlabs-voice-id" placeholder="声クローンのVoice ID">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>ウェイクワード設定</div>
+      <div class="fl">
+        <div class="lbl">AIの名前（呼びかける言葉）</div>
+        <input class="inp" id="wake-name" placeholder="例：ことのは、アシスタント" oninput="updateWakePreview()">
+        <div class="sr" style="margin-top:2px">
+          <span style="font-size:11px;color:var(--soft)">この名前を呼ぶと自動で録音開始します</span>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:4px">
+          <input type="checkbox" id="wake-enabled" style="accent-color:var(--accent)" onchange="toggleWake()">
+          <span style="font-size:11px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--soft)">ウェイクワードを有効にする</span>
+        </label>
+        <div id="wake-status" style="font-size:10px;color:var(--dim);margin-top:2px">🔴 無効</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin:0"><span class="dot"></span>キャラクター設定</div>
+        <button class="ctbtn" id="char-toggle-btn" onclick="toggleCharacterPanel()">詳細 ▼</button>
+      </div>
+      <div id="prompt-preview" onclick="toggleCharacterPanel()">キャラクター未設定（詳細ボタンで設定）</div>
+      <div id="character-panel">
+        <div class="fl">
+          <div class="lbl">① 関係性</div>
+          <select class="inp" id="char-relationship" onchange="onRelChange()">
+            <option value="">選択してください</option>
+            <option value="友人">友人・仲の良い友達</option>
+            <option value="親友">親友・幼馴染</option>
+            <option value="恋人">恋人・パートナー</option>
+            <option value="先輩">先輩・メンター</option>
+            <option value="後輩">後輩・年下の友人</option>
+            <option value="家族">家族・兄弟姉妹</option>
+            <option value="師匠">師匠・先生</option>
+            <option value="カウンセラー">カウンセラー</option>
+            <option value="custom">カスタム入力...</option>
+          </select>
+          <input class="inp" id="char-rel-custom" placeholder="関係性を入力..." style="display:none" oninput="buildSystemPrompt()">
+        </div>
+        <div>
+          <div class="lbl" style="margin-bottom:6px">② 性格</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px" id="personality-tags">
+            <span class="char-tag" data-v="明るく元気">明るく元気</span>
+            <span class="char-tag" data-v="穏やかで優しい">穏やかで優しい</span>
+            <span class="char-tag" data-v="純粋無垢">純粋無垢</span>
+            <span class="char-tag" data-v="クールで冷静">クールで冷静</span>
+            <span class="char-tag" data-v="天然でおっちょこちょい">天然ぽんこつ</span>
+            <span class="char-tag" data-v="ツンデレ">ツンデレ</span>
+            <span class="char-tag" data-v="知的で好奇心旺盛">知的・好奇心旺盛</span>
+            <span class="char-tag" data-v="甘えん坊">甘えん坊</span>
+            <span class="char-tag" data-v="しっかり者">しっかり者</span>
+            <span class="char-tag" data-v="ミステリアス">ミステリアス</span>
+          </div>
+          <input class="inp" id="char-personality-custom" placeholder="追加の性格を自由入力..." oninput="buildSystemPrompt()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div class="fl">
+            <div class="lbl">③ 性別</div>
+            <select class="inp" id="char-gender" onchange="buildSystemPrompt()">
+              <option value="">指定なし</option>
+              <option value="女性">女性</option>
+              <option value="男性">男性</option>
+              <option value="中性的">中性的</option>
+            </select>
+          </div>
+          <div class="fl">
+            <div class="lbl">年齢</div>
+            <select class="inp" id="char-age" onchange="buildSystemPrompt()">
+              <option value="">指定なし</option>
+              <option value="子供（10歳前後）">子供</option>
+              <option value="中学生">中学生</option>
+              <option value="高校生">高校生</option>
+              <option value="大学生">大学生</option>
+              <option value="20代">20代</option>
+              <option value="30代">30代</option>
+              <option value="40代以上">40代以上</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="lbl" style="margin-bottom:6px">④ 話し方</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px" id="speech-tags">
+            <span class="char-tag" data-v="タメ口でフレンドリー">タメ口</span>
+            <span class="char-tag" data-v="敬語を使う">敬語</span>
+            <span class="char-tag" data-v="語尾に「〜だよ」を使う">〜だよ</span>
+            <span class="char-tag" data-v="語尾に「〜です」を使う">〜です</span>
+            <span class="char-tag" data-v="関西弁">関西弁</span>
+            <span class="char-tag" data-v="感情豊かに話す">感情豊か</span>
+            <span class="char-tag" data-v="短く端的に話す">短く端的</span>
+          </div>
+          <input class="inp" id="char-speech-custom" placeholder="話し方を自由入力..." oninput="buildSystemPrompt()">
+        </div>
+        <div class="fl">
+          <div class="lbl">⑤ 背景・世界観</div>
+          <textarea class="inp" id="char-background" rows="3" placeholder="例：魔法学校に通う見習い魔女。普通の日常に感動しがち。" oninput="buildSystemPrompt()"></textarea>
+        </div>
+        <div>
+          <div class="lbl" style="margin-bottom:7px">⑥ キャラクター保護</div>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-bottom:8px">
+            <input type="checkbox" id="char-no-meta" onchange="buildSystemPrompt()" style="margin-top:2px;accent-color:var(--accent)">
+            <span style="font-size:11px;color:var(--soft);line-height:1.5">メタ発言を禁止する<br><span style="color:var(--dim)">「私はAIです」などを防ぐ</span></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" id="char-filter" onchange="buildSystemPrompt()" style="margin-top:2px;accent-color:var(--accent)">
+            <span style="font-size:11px;color:var(--soft);line-height:1.5">キャラクター検閲を有効にする<br><span style="color:var(--dim)">性格・世界観に合わない発言を抑制する</span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveSettings()">💾 設定を保存する</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="chat-header">
+    <div style="font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--soft)">💬 おしゃべり</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="conn-pill"><span class="sd" id="conn-dot" style="background:#c8d8e8"></span><span id="conn-text">APIキーを設定してね</span></div>
+      <button class="clear-btn" onclick="clearConversation()">🗑 クリア</button>
+    </div>
+  </div>
+
+  <div class="conversation" id="conversation">
+    <div class="welcome" id="welcome">
+      <div class="mascot">🌸</div>
+      <h2>はじめまして！ことのはだよ🎀</h2>
+      <p>マイクボタンを押して話しかけてみてね。あなたの声に合わせて、AIが声で返事をするよ！</p>
+      <div class="tips">
+        <span class="tip">🎤 左Shiftで録音</span>
+        <span class="tip">🔊 声で返答</span>
+        <span class="tip">🆓 Groq無料</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mic-area">
+    <div class="tr-display">
+      <div class="tr-placeholder" id="tr-placeholder">マイクボタンを押してね 🎤</div>
+      <div class="tr-text" id="tr-text"></div>
+    </div>
+    <div class="wave-wrap" id="waveform"></div>
+    <div class="mic-row">
+      <button class="mic-btn" id="mic-btn" onclick="toggleListening()">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" fill="white"/>
+          <path d="M19 10V12C19 15.87 15.87 19 12 19M5 10V12C5 15.87 8.13 19 12 19M12 19V23M8 23H16" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mic-hint" id="mic-hint">クリック または 左Shift長押し で録音</div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// 泡生成
+(function(){
+  const c=document.getElementById('bubbles');
+  const cols=['rgba(116,197,240,.22)','rgba(244,160,184,.18)','rgba(167,139,250,.16)','rgba(212,245,233,.28)','rgba(255,255,255,.32)'];
+  for(let i=0;i<20;i++){
+    const b=document.createElement('div');b.className='bubble';
+    const s=10+Math.random()*34;
+    b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:-50px;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${9+Math.random()*13}s;animation-delay:${Math.random()*11}s;`;
+    c.appendChild(b);
+  }
+})();
+
+// STATE
+let isListening=false,isSpeaking=false,mediaRecorder=null,audioChunks=[],conversationHistory=[];
+let settings={groqKey:'',geminiKey:'',anthropicKey:'',elevenlabsKey:'',elevenlabsVoiceId:'',systemPrompt:'あなたは気さくで話しやすい友人です。堅苦しい言葉や箇条書きは使わず、自然な口語で返答してください。相手の気持ちに寄り添い共感を大切にしてください。短めに返してキャッチボールを楽しんでください。',ttsMode:'browser',aiProvider:'groq',wakeName:'ことのは',wakeEnabled:true};
+let selPTags=[],selSTags=[];
+
+function loadSettings(){
+  const s=localStorage.getItem('kotonaha-v2');
+  if(s) settings={...settings,...JSON.parse(s)};
+  document.getElementById('groq-key').value=settings.groqKey||'';
+  document.getElementById('gemini-key').value=settings.geminiKey||'';
+  document.getElementById('anthropic-key').value=settings.anthropicKey||'';
+  document.getElementById('elevenlabs-key').value=settings.elevenlabsKey||'';
+  document.getElementById('elevenlabs-voice-id').value=settings.elevenlabsVoiceId||'';
+  setProvider(settings.aiProvider||'groq',false);
+  setTTSMode(settings.ttsMode||'browser',false);
+  updateStatus();
+  setTimeout(()=>loadChar(settings),0);
+  // ウェイクワード復元
+  const wn=document.getElementById('wake-name');
+  if(wn)wn.value=settings.wakeName||'ことのは';
+  const we=document.getElementById('wake-enabled');
+  if(we){we.checked=settings.wakeEnabled||false;if(settings.wakeEnabled)setTimeout(startWakeWord,1000);}
+}
+
+function saveSettings(){
+  settings.groqKey=document.getElementById('groq-key').value.trim();
+  settings.geminiKey=document.getElementById('gemini-key').value.trim();
+  settings.anthropicKey=document.getElementById('anthropic-key').value.trim();
+  settings.elevenlabsKey=document.getElementById('elevenlabs-key').value.trim();
+  settings.elevenlabsVoiceId=document.getElementById('elevenlabs-voice-id').value.trim();
+  settings.wakeName=document.getElementById('wake-name').value.trim()||'ことのは';
+  settings.wakeEnabled=document.getElementById('wake-enabled').checked;
+  saveChar();buildSystemPrompt();
+  localStorage.setItem('kotonaha-v2',JSON.stringify(settings));
+  // ウェイク再起動
+  stopWakeWord();
+  if(settings.wakeEnabled)setTimeout(startWakeWord,500);
+  updateStatus();showToast('設定を保存したよ 🌸','success');
+}
+
+function setProvider(p,save=true){
+  settings.aiProvider=p;
+  ['groq','gemini','anthropic'].forEach(x=>{
+    const btn=document.getElementById('provider-'+x);if(btn)btn.classList.toggle('active',x===p);
+    const el=document.getElementById(x+'-settings');if(el){el.style.display=x===p?'flex':'none';el.style.flexDirection='column';el.style.gap='6px';}
+  });
+  if(save)saveSettings();
+}
+
+function setTTSMode(m,save=true){
+  settings.ttsMode=m;
+  document.getElementById('profile-browser').classList.toggle('active',m==='browser');
+  document.getElementById('profile-elevenlabs').classList.toggle('active',m==='elevenlabs');
+  document.getElementById('badge-browser').style.display=m==='browser'?'':'none';
+  document.getElementById('badge-elevenlabs').style.display=m==='elevenlabs'?'':'none';
+  document.getElementById('elevenlabs-settings').style.display=m==='elevenlabs'?'flex':'none';
+  document.getElementById('elevenlabs-settings').style.flexDirection='column';
+  document.getElementById('elevenlabs-settings').style.gap='8px';
+  if(save)saveSettings();
+}
+
+function updateStatus(){
+  const dot=document.getElementById('conn-dot'),text=document.getElementById('conn-text');
+  const hG=settings.groqKey&&settings.groqKey.startsWith('gsk_');
+  const hM=settings.geminiKey&&settings.geminiKey.startsWith('AIza');
+  const hA=settings.anthropicKey&&settings.anthropicKey.startsWith('sk-ant');
+  const ok=(settings.aiProvider==='groq'&&hG)||(settings.aiProvider==='gemini'&&hM)||(settings.aiProvider==='anthropic'&&hA);
+  dot.style.background=ok?'#6dd8a0':'#c8d8e8';
+  text.textContent=ok?{groq:'Groq つながってるよ✨',gemini:'Gemini つながってるよ✨',anthropic:'Claude つながってるよ✨'}[settings.aiProvider]:'APIキーを設定してね';
+  [['groq',hG],['gemini',hM],['anthropic',hA]].forEach(([p,v])=>{
+    const d=document.getElementById(p+'-status'),t=document.getElementById(p+'-status-text');
+    if(d)d.style.background=v?'#6dd8a0':'#c8d8e8';if(t)t.textContent=v?'設定済み ✓':'未設定';
+  });
+}
+
+// CHARACTER
+function toggleCharacterPanel(){
+  const p=document.getElementById('character-panel'),b=document.getElementById('char-toggle-btn');
+  const open=p.style.display!=='none';p.style.display=open?'none':'flex';b.textContent=open?'詳細 ▼':'詳細 ▲';
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.classList.contains('char-tag'))return;
+  const t=e.target,isP=t.closest('#personality-tags')!==null,arr=isP?selPTags:selSTags,v=t.dataset.v;
+  const i=arr.indexOf(v);if(i===-1){arr.push(v);t.classList.add('selected');}else{arr.splice(i,1);t.classList.remove('selected');}
+  buildSystemPrompt();
+});
+
+function onRelChange(){
+  document.getElementById('char-rel-custom').style.display=document.getElementById('char-relationship').value==='custom'?'block':'none';
+  buildSystemPrompt();
+}
+
+function buildSystemPrompt(){
+  const rel=document.getElementById('char-relationship').value==='custom'?document.getElementById('char-rel-custom').value:document.getElementById('char-relationship').value;
+  const pers=[...selPTags,document.getElementById('char-personality-custom').value].filter(Boolean);
+  const g=document.getElementById('char-gender').value,a=document.getElementById('char-age').value;
+  const sp=[...selSTags,document.getElementById('char-speech-custom').value].filter(Boolean);
+  const bg=document.getElementById('char-background').value;
+  const noMeta=document.getElementById('char-no-meta').checked,flt=document.getElementById('char-filter').checked;
+  let pts=[];
+  if(g||a)pts.push(`あなたは${[g,a].filter(Boolean).join('・')}のキャラクターです。`);
+  if(rel)pts.push(`ユーザーとの関係は「${rel}」です。その関係性にふさわしい距離感と親しみで接してください。`);
+  if(pers.length)pts.push(`性格は「${pers.join('・')}」です。この性格を常に一貫して表現してください。`);
+  if(sp.length)pts.push(`話し方：${sp.join('、')}。`);
+  if(bg)pts.push(`背景・世界観：${bg}`);
+  pts.push('返答は短めにして会話のキャッチボールを大切にしてください。箇条書きや見出しは使わず、自然な口語で話してください。');
+  if(noMeta)pts.push('「私はAIです」などのメタ的な発言は絶対にしないでください。常にキャラクターとして振る舞い続けてください。');
+  if(flt)pts.push('設定された性格・世界観・年齢にそぐわない発言（専門的すぎる用語、政治的な発言、過度に論理的な解説）は避け、常にキャラクターの個性の範囲内で返答してください。');
+  const prompt=pts.length>1?pts.join('\n'):'あなたは気さくで話しやすい友人です。自然な口語で話してください。';
+  settings.systemPrompt=prompt;
+  const pv=document.getElementById('prompt-preview');
+  if(pv)pv.textContent=prompt.slice(0,110)+(prompt.length>110?'...':'');
+}
+
+function loadChar(s){
+  if(s.cRel){const e=document.getElementById('char-relationship');if(e)e.value=s.cRel;}
+  if(s.cRelC){const e=document.getElementById('char-rel-custom');if(e){e.value=s.cRelC;e.style.display='block';}}
+  if(s.cPT){selPTags=s.cPT;document.querySelectorAll('#personality-tags .char-tag').forEach(t=>{if(selPTags.includes(t.dataset.v))t.classList.add('selected');});}
+  if(s.cPC){const e=document.getElementById('char-personality-custom');if(e)e.value=s.cPC;}
+  if(s.cG){const e=document.getElementById('char-gender');if(e)e.value=s.cG;}
+  if(s.cA){const e=document.getElementById('char-age');if(e)e.value=s.cA;}
+  if(s.cST){selSTags=s.cST;document.querySelectorAll('#speech-tags .char-tag').forEach(t=>{if(selSTags.includes(t.dataset.v))t.classList.add('selected');});}
+  if(s.cSC){const e=document.getElementById('char-speech-custom');if(e)e.value=s.cSC;}
+  if(s.cBG){const e=document.getElementById('char-background');if(e)e.value=s.cBG;}
+  if(s.cNM!==undefined){const e=document.getElementById('char-no-meta');if(e)e.checked=s.cNM;}
+  if(s.cFL!==undefined){const e=document.getElementById('char-filter');if(e)e.checked=s.cFL;}
+  buildSystemPrompt();
+}
+
+function saveChar(){
+  settings.cRel=document.getElementById('char-relationship').value;
+  settings.cRelC=document.getElementById('char-rel-custom').value;
+  settings.cPT=selPTags;settings.cPC=document.getElementById('char-personality-custom').value;
+  settings.cG=document.getElementById('char-gender').value;settings.cA=document.getElementById('char-age').value;
+  settings.cST=selSTags;settings.cSC=document.getElementById('char-speech-custom').value;
+  settings.cBG=document.getElementById('char-background').value;
+  settings.cNM=document.getElementById('char-no-meta').checked;settings.cFL=document.getElementById('char-filter').checked;
+}
+
+// RECORDING
+async function startRecording(){
+  const ok=(settings.aiProvider==='groq'&&settings.groqKey)||(settings.aiProvider==='gemini'&&settings.geminiKey)||(settings.aiProvider==='anthropic'&&settings.anthropicKey);
+  if(!ok){showToast('APIキーを設定してね 🔑');return;}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks=[];
+    const mt=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')?'audio/ogg;codecs=opus':'audio/webm';
+    mediaRecorder=new MediaRecorder(stream,{mimeType:mt});
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());await processRec();};
+    mediaRecorder.start(100);isListening=true;updateMicUI(true);hideWelcome();showTr('録音中... 🎤',true);
+  }catch(e){showToast('マイクエラー: '+e.message);}
+}
+
+function stopRecording(){
+  if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop();
+  isListening=false;updateMicUI(false);
+  // 録音終了後ウェイク再開
+  if(settings.wakeEnabled&&!wakeActive)setTimeout(startWakeWord,1500);
+}
+
+async function processRec(){
+  if(!audioChunks.length)return;
+  showTr('文字起こし中... ✨',true);
+  const blob=new Blob(audioChunks,{type:mediaRecorder.mimeType});
+  const ab=await blob.arrayBuffer();const ua=new Uint8Array(ab);
+  try{
+    let text='';
+    if(window.electronAPI){
+      const r=await window.electronAPI.transcribeAudio(Array.from(ua),settings.groqKey,mediaRecorder.mimeType);
+      if(!r.success)throw new Error(r.error);text=r.text;
+    }else{
+      const fd=new FormData();fd.append('file',blob,'audio.webm');fd.append('model','whisper-large-v3-turbo');fd.append('language','ja');
+      const res=await fetch('https://api.groq.com/openai/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+settings.groqKey},body:fd});
+      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'Whisperエラー');}
+      const d=await res.json();text=d.text.trim();
+    }
+    if(text){showTr(text,false);setTimeout(()=>handleMsg(text),300);}
+    else{clearTr();showToast('音声が聞き取れなかったよ 😢');}
+  }catch(e){clearTr();showToast('文字起こしエラー: '+e.message);}
+}
+
+function toggleListening(){if(isSpeaking){stopSpeaking();return;}if(isListening)stopRecording();else startRecording();}
+
+// WAVEFORM
+const WN=20,wEl=document.getElementById('waveform');
+for(let i=0;i<WN;i++){const b=document.createElement('div');b.className='wave-bar';wEl.appendChild(b);}
+function animWave(){
+  if(!isListening)return;
+  wEl.querySelectorAll('.wave-bar').forEach((b,i)=>{const e=1-Math.abs(i-WN/2)/(WN/2)*.4;b.style.height=(4+Math.random()*22)*e+'px';});
+  requestAnimationFrame(()=>setTimeout(animWave,80));
+}
+function updateMicUI(l){
+  document.getElementById('mic-btn').classList.toggle('listening',l);
+  document.getElementById('mic-hint').textContent=l?'話してね… 🎤（離すと送信）':'クリック または 左Shift長押し で録音';
+  wEl.classList.toggle('active',l);if(l)animWave();
+  if(window.electronAPI)window.electronAPI.sendListeningState(l);
+}
+
+// TRANSCRIPT
+function showTr(t,i){
+  document.getElementById('tr-placeholder').style.display='none';
+  const e=document.getElementById('tr-text');e.style.display='block';e.textContent=t;e.style.opacity=i?'0.6':'1';
+}
+function clearTr(){document.getElementById('tr-placeholder').style.display='block';document.getElementById('tr-text').style.display='none';}
+
+// CONVERSATION UI
+function hideWelcome(){const w=document.getElementById('welcome');if(w)w.style.display='none';}
+function addMsg(role,text){
+  const c=document.getElementById('conversation'),m=document.createElement('div');m.className='message '+role;
+  m.innerHTML=`<div class="msg-avatar">${role==='user'?'🧑':'🌸'}</div><div class="msg-content"><div class="msg-name">${role==='user'?'あなた':'ことのは'}</div><div class="msg-bubble">${text}</div></div>`;
+  c.appendChild(m);c.scrollTop=c.scrollHeight;
+}
+function addTyping(){
+  const c=document.getElementById('conversation'),m=document.createElement('div');m.className='message ai';m.id='typing';
+  m.innerHTML=`<div class="msg-avatar">🌸</div><div class="msg-content"><div class="msg-name">ことのは</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  c.appendChild(m);c.scrollTop=c.scrollHeight;
+}
+function removeTyping(){const e=document.getElementById('typing');if(e)e.remove();}
+function clearConversation(){
+  conversationHistory=[];
+  document.getElementById('conversation').innerHTML=`<div class="welcome" id="welcome"><div class="mascot">🌸</div><h2>またおしゃべりしよ！🎀</h2><p>マイクボタンを押して話しかけてみてね。</p></div>`;
+  clearTr();
+}
+
+// AI
+async function handleMsg(text){
+  if(!text)return;clearTr();addMsg('user',text);conversationHistory.push({role:'user',content:text});addTyping();
+  try{
+    let ai;
+    if(settings.aiProvider==='groq')ai=await callGroq();
+    else if(settings.aiProvider==='gemini')ai=await callGemini();
+    else ai=await callAnthropic();
+    conversationHistory.push({role:'assistant',content:ai});removeTyping();addMsg('ai',ai);await speakText(ai);
+  }catch(e){removeTyping();showToast('エラー: '+e.message);}
+}
+
+async function callGroq(){
+  if(!settings.groqKey)throw new Error('Groq APIキーを設定してください');
+  const msgs=[{role:'system',content:settings.systemPrompt},...conversationHistory];
+  const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:.9})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Groq APIエラー');}
+  const d=await r.json();return d.choices?.[0]?.message?.content||'返答を取得できませんでした';
+}
+
+async function callGemini(){
+  if(!settings.geminiKey)throw new Error('Gemini APIキーを設定してください');
+  const contents=conversationHistory.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${settings.geminiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:settings.systemPrompt}]},contents,generationConfig:{maxOutputTokens:1024}})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Gemini APIエラー');}
+  const d=await r.json();return d.candidates?.[0]?.content?.parts?.[0]?.text||'返答を取得できませんでした';
+}
+
+async function callAnthropic(){
+  if(!settings.anthropicKey)throw new Error('Anthropic APIキーを設定してください');
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':settings.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1024,system:settings.systemPrompt,messages:conversationHistory})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Anthropic APIエラー');}
+  const d=await r.json();return d.content[0].text;
+}
+
+// TTS
+let curUtt=null,curAudio=null;
+async function speakText(t){
+  console.log('[TTS] mode:',settings.ttsMode,'key:',settings.elevenlabsKey?settings.elevenlabsKey.slice(0,6)+'...':'なし','vid:',settings.elevenlabsVoiceId||'なし');
+  if(settings.ttsMode==='elevenlabs'&&settings.elevenlabsKey&&settings.elevenlabsVoiceId){
+    await speakEL(t);
+  } else {
+    if(settings.ttsMode==='elevenlabs') showToast('ElevenLabs: APIキーまたはVoice IDが未入力です 🔑');
+    speakBrowser(t);
+  }
+}
+
+function speakBrowser(t){
+  if(!window.speechSynthesis)return;window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.95;
+  const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('ja'));if(v)u.voice=v;
+  curUtt=u;isSpeaking=true;updateSpeakUI(true);
+  u.onend=()=>{isSpeaking=false;curUtt=null;updateSpeakUI(false);};
+  u.onerror=()=>{isSpeaking=false;updateSpeakUI(false);};
+  window.speechSynthesis.speak(u);
+}
+
+async function speakEL(t){
+  isSpeaking=true;updateSpeakUI(true);
+  try{
+    const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${settings.elevenlabsVoiceId.trim()}`,{method:'POST',headers:{'Content-Type':'application/json','xi-api-key':settings.elevenlabsKey.trim()},body:JSON.stringify({text:t,model_id:'eleven_multilingual_v2',voice_settings:{stability:.5,similarity_boost:.75}})});
+    if(!r.ok){let d='';try{const e=await r.json();d=e?.detail?.message||e?.detail||JSON.stringify(e);}catch{d='HTTP '+r.status;}throw new Error(d);}
+    const blob=await r.blob(),url=URL.createObjectURL(blob),audio=new Audio(url);curAudio=audio;
+    audio.onended=()=>{isSpeaking=false;curAudio=null;updateSpeakUI(false);URL.revokeObjectURL(url);};
+    await audio.play();
+  }catch(e){isSpeaking=false;updateSpeakUI(false);showToast('ElevenLabs エラー: '+e.message);speakBrowser(t);}
+}
+
+function stopSpeaking(){
+  if(curUtt){window.speechSynthesis.cancel();curUtt=null;}
+  if(curAudio){curAudio.pause();curAudio=null;}
+  isSpeaking=false;updateSpeakUI(false);
+}
+
+function updateSpeakUI(s){
+  const btn=document.getElementById('mic-btn'),hint=document.getElementById('mic-hint');
+  if(s){btn.style.background='linear-gradient(135deg,#a8e6cf,#74c5f0)';btn.style.boxShadow='0 6px 28px rgba(106,210,180,.48)';hint.textContent='返答中... 🔊（クリックで停止）';}
+  else{btn.style.background='';btn.style.boxShadow='';hint.textContent='クリック または 左Shift長押し で録音';}
+}
+
+// TOAST
+function showToast(msg,type='error'){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  t.style.borderLeftColor=type==='success'?'#74c5f0':'#f4a0b8';t.style.color=type==='success'?'#5a9fcc':'#c07090';
+  setTimeout(()=>{t.style.display='none';},4000);
+}
+
+// ── WAKE WORD ──
+let wakeRecognition=null;
+let wakeActive=false;
+let wakeTimer=null;
+
+function toggleWake(){
+  const enabled=document.getElementById('wake-enabled').checked;
+  settings.wakeEnabled=enabled;
+  if(enabled) startWakeWord(); else stopWakeWord();
+}
+
+function updateWakePreview(){
+  const name=document.getElementById('wake-name').value.trim();
+  settings.wakeName=name||'ことのは';
+}
+
+function startWakeWord(){
+  if(wakeActive)return;
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){showToast('このブラウザはウェイクワードに対応していません');return;}
+  wakeRecognition=new SpeechRecognition();
+  wakeRecognition.lang='ja-JP';
+  wakeRecognition.continuous=true;
+  wakeRecognition.interimResults=true;
+  wakeRecognition.onstart=()=>{wakeActive=true;updateWakeStatus(true);};
+  wakeRecognition.onresult=(e)=>{
+    if(isListening||isSpeaking)return;
+    const name=(settings.wakeName||'ことのは').toLowerCase();
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript.toLowerCase().replace(/\s/g,'');
+      // ひらがな・カタカナ・漢字いずれでも検知
+      const variants=[name, toKatakana(name), toHiragana(name)];
+      if(variants.some(v=>t.includes(v))){
+        onWakeWordDetected();
+        break;
+      }
+    }
+  };
+  wakeRecognition.onend=()=>{
+    wakeActive=false;
+    // 有効なら自動再起動
+    if(settings.wakeEnabled&&!isListening){
+      wakeTimer=setTimeout(startWakeWord, 500);
+    } else {
+      updateWakeStatus(false);
+    }
+  };
+  wakeRecognition.onerror=(e)=>{
+    if(e.error==='aborted')return;
+    wakeActive=false;
+    if(settings.wakeEnabled) wakeTimer=setTimeout(startWakeWord,1000);
+  };
+  try{ wakeRecognition.start(); }catch(e){}
+}
+
+function stopWakeWord(){
+  settings.wakeEnabled=false;
+  wakeActive=false;
+  if(wakeTimer){clearTimeout(wakeTimer);wakeTimer=null;}
+  if(wakeRecognition){try{wakeRecognition.stop();}catch(e){}}
+  wakeRecognition=null;
+  updateWakeStatus(false);
+}
+
+function onWakeWordDetected(){
+  // ウェイクワード検知 → 常時認識を一時停止して本録音開始
+  if(wakeRecognition){try{wakeRecognition.stop();}catch(e){}}
+  wakeActive=false;
+  // 少し待ってから録音開始（ウェイクワード自体を拾わないよう）
+  setTimeout(()=>{
+    showToast('👂 ' + (settings.wakeName||'ことのは') + 'が起動しました！', 'success');
+    startRecording();
+  }, 300);
+}
+
+function updateWakeStatus(active){
+  const el=document.getElementById('wake-status');
+  if(el) el.textContent=active?'🟢 待機中（名前を呼んでね）':'🔴 無効';
+}
+
+// ひらがな⇔カタカナ変換
+function toKatakana(str){return str.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));}
+function toHiragana(str){return str.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));}
+
+// PTT
+let shiftHeld=false;
+document.addEventListener('keydown',e=>{if(e.code!=='ShiftLeft'||e.repeat||shiftHeld||isSpeaking)return;shiftHeld=true;startRecording();});
+document.addEventListener('keyup',e=>{if(e.code!=='ShiftLeft'||!shiftHeld)return;shiftHeld=false;stopRecording();});
+if(window.electronAPI){window.electronAPI.onToggleListening(()=>{if(isListening)stopRecording();else startRecording();});}
+
+// INIT
+loadSettings();
+if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
+</script>
+</body>
+</html>
